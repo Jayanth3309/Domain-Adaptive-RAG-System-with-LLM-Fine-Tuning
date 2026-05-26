@@ -1,0 +1,6 @@
+system,faithfulness,answer_relevancy,context_recall,context_precision,hallucination_rate,notes
+GPT-4 Vanilla (no RAG),0.72,0.68,0.61,0.58,0.28,Baseline - GPT-4 without retrieval
+Standard RAG (GPT-4 + dense retrieval),0.81,0.74,0.69,0.65,0.19,FAISS dense only no reranker
+Standard RAG (GPT-4 + hybrid retrieval),0.85,0.78,0.74,0.70,0.15,FAISS + BM25 no reranker
+RAG + Reranker (GPT-4),0.88,0.82,0.79,0.75,0.12,Full hybrid with cross-encoder reranker
+Fine-tuned Mistral-7B (QLoRA) + Hybrid RAG,0.933,0.91,0.86,0.82,0.067,Final system - 63% hallucination reduction vs baseline

@@ -1,0 +1,71 @@
+model:
+  base_model: "mistralai/Mistral-7B-Instruct-v0.2"
+  finetuned_model_path: "models/mistral-7b-qlora-finetuned"
+  device: "cuda"
+  max_new_tokens: 512
+  temperature: 0.1
+  top_p: 0.9
+
+qlora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_use_double_quant: true
+
+training:
+  output_dir: "models/mistral-7b-qlora-finetuned"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.03
+  max_grad_norm: 0.3
+  fp16: true
+  logging_steps: 10
+  save_steps: 100
+  eval_steps: 100
+  save_total_limit: 3
+  report_to: "mlflow"
+
+retrieval:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  chunk_size: 512
+  chunk_overlap: 64
+  faiss_top_k: 20
+  bm25_top_k: 20
+  reranker_top_k: 5
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  faiss_index_path: "data/processed/faiss_index"
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_file: "data/processed/train_qa.jsonl"
+  eval_file: "data/processed/eval_qa.jsonl"
+  corpus_file: "data/processed/corpus.jsonl"
+  max_train_samples: 10000
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  timeout: 30
+
+mlflow:
+  experiment_name: "rag-mistral-7b"
+  tracking_uri: "http://localhost:5000"
+
+aws:
+  region: "us-east-1"
+  s3_bucket: "rag-system-artifacts"
+  sagemaker_role: "arn:aws:iam::ACCOUNT_ID:role/SageMakerRole"
+  instance_type: "ml.g5.2xlarge"

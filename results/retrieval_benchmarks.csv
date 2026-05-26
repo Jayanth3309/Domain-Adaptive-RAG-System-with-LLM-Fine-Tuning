@@ -1,0 +1,5 @@
+retrieval_strategy,ndcg_at_10,mrr,recall_at_5,recall_at_10,latency_ms,notes
+Dense only (FAISS),0.612,0.541,0.58,0.71,12,Baseline single-stage retrieval
+Sparse only (BM25),0.578,0.503,0.54,0.68,3,Keyword retrieval only
+Hybrid FAISS + BM25 (no reranker),0.701,0.634,0.69,0.81,18,Simple score fusion
+Hybrid + Cross-Encoder Reranker,0.821,0.763,0.79,0.88,47,34% NDCG@10 lift over dense only
